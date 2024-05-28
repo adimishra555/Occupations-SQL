@@ -1,13 +1,17 @@
 // Occupations-SQL HackerRank
 
 SELECT
-    MAX(CASE WHEN OCCUPATION = 'Doctor' THEN NAME END) AS Doctor,
-    MAX(CASE WHEN OCCUPATION = 'Professor' THEN NAME END) AS Professor,
-    MAX(CASE WHEN OCCUPATION = 'Singer' THEN NAME END) AS Singer,
-    MAX(CASE WHEN OCCUPATION = 'Actor' THEN Name END) AS Actor
-    
+    D.Name AS Doctor,
+    P.Name AS Professor,
+    S.Name AS Singer,
+    A.Name AS Actor
 FROM
-    (SELECT Name, Occupation,
-    ROW_NUMBER() OVER(PARTITION BY OCCUPATION ORDER BY Name) AS oc 
-    FROM OCCUPATIONS) AS SUB
-GROUP BY oc;
+    (SELECT Name, ROW_NUMBER() OVER (ORDER BY Name) AS rn FROM OCCUPATIONS WHERE Occupation = 'Doctor') AS D
+    FULL JOIN (SELECT Name, ROW_NUMBER() OVER (ORDER BY Name) AS rn FROM OCCUPATIONS WHERE Occupation = 'Professor') AS P
+    ON D.rn = P.rn
+    FULL JOIN (SELECT Name, ROW_NUMBER() OVER (ORDER BY Name) AS rn FROM OCCUPATIONS WHERE Occupation = 'Singer') AS S
+    ON D.rn = S.rn
+    FULL JOIN (SELECT Name, ROW_NUMBER() OVER (ORDER BY Name) AS rn FROM OCCUPATIONS WHERE Occupation = 'Actor') AS A
+    ON D.rn = A.rn
+ORDER BY COALESCE(D.rn, P.rn, S.rn, A.rn);
+
