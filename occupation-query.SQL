@@ -1,0 +1,13 @@
+// Occupations-SQL HackerRank
+
+SELECT
+    MAX(CASE WHEN OCCUPATION = 'Doctor' THEN NAME END) AS Doctor,
+    MAX(CASE WHEN OCCUPATION = 'Professor' THEN NAME END) AS Professor,
+    MAX(CASE WHEN OCCUPATION = 'Singer' THEN NAME END) AS Singer,
+    MAX(CASE WHEN OCCUPATION = 'Actor' THEN Name END) AS Actor
+    
+FROM
+    (SELECT Name, Occupation,
+    ROW_NUMBER() OVER(PARTITION BY OCCUPATION ORDER BY Name) AS oc 
+    FROM OCCUPATIONS) AS SUB
+GROUP BY oc;
